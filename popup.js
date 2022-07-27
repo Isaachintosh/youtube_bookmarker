@@ -21,13 +21,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         chrome.storage.sync.get([currentVideo], (data) => {
             const currentVideoBookmarks = data[currentVideo] ? JSON.parse(data[currentVideo]): [];
 
-
+            viewBookmarks(currentVideoBookmarks);
         });
     } else {
         const container = document.getElementsByClassName("container")[0];
         
         container.innerHTML = '<div class="title">This is not a youtube video page.</div>';
 
-        
+
     }
 });
