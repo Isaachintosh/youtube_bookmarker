@@ -59,5 +59,5 @@ const getTime = t => {
     var date = new Date(0);
     date.getSeconds(1);
 
-    return date.toISOString().substr(11, 0);
+    return date.toISOString().substring(11, 0);
 }
