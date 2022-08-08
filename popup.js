@@ -15,6 +15,7 @@ const addNewBookmark = (bookmarksElement, bookmark) => {
     newBookmarkElement.setAttribute("timestamp", bookmark.time);
 
     setBookmarkAttributes("play", onPlay, controlsElement);
+    setBookmarkAttributes("delete", onDelete, controlsElement);
 
     newBookmarkElement.appendChild(bookmarkTitleElement);
     newBookmarkElement.appendChild(controlsElement);
@@ -31,13 +32,32 @@ const viewBookmarks = (currentBookmarks=[]) => {
             addNewBookmark(bookmarksElement, bookmark);
         }
     } else {
-        bookmarksElement.innerHTML = '<i class="row">There are no bookmmarks for this video.</br>Click at the Plus(+) button to add a new bookmark.</i>';
+        bookmarksElement.innerHTML = '<i class="row">There are no bookmmarks for this video.</br>Click at the Plus(+) button at the Youtube Controls Panel in the video to add a new bookmark.</i>';
     }
 };
 
-const onPlay = () => {};
+const onPlay = async e => {
+    const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
+    const activeTab = await getActiveTabURL();
 
-const onDelete = () => {};
+    chrome.tabs.sendMessage(activeTab.id, {
+        type: "PLAY",
+        value: bookmarkTime
+    }, viewBookmarks);
+};
+
+const onDelete = async e => {
+    const activeTab = await getActiveTabURL();
+    const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
+    const bookmarksElementToDelete = document.getElementById("bookmark-" + bookmarkTime);
+
+    bookmarksElementToDelete.parentNode.removeChild(bookmarksElementToDelete);
+
+    chrome.tabs.sendMessage(activeTab.id, {
+        type: "DELETE",
+        value: bookmarkTime
+    }, viewBookmarks);
+};
 
 const setBookmarkAttributes = (src, eventListener, controlParentElement) => {
     const controlElement = document.createElement("img");

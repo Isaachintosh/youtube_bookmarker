@@ -1,3 +1,10 @@
+chrome.runtime.onConnect.addListener(port => {
+    console.log('connected', port);
+    if (port.name === 'hi') {
+        port.onMessage.addListener(this.processMessage);
+    }
+});
+
 chrome.tabs.onUpdated.addListener((tabId, tab) => {
     if (tab.url && tab.url.includes("youtube.com/watch")) {
         const queryParameters = tab.url.split("?")[1];
